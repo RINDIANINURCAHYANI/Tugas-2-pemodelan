@@ -1,10 +1,13 @@
 import os
 from flask import Flask, render_template, request
 import matplotlib
-matplotlib.use("Agg")  # WAJIB untuk server (Railway)
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
+
+# PASTIKAN FOLDER STATIC ADA
+os.makedirs("static", exist_ok=True)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -16,7 +19,7 @@ def index():
             service_time = float(request.form['service'])
 
             if interarrival <= 0 or service_time <= 0:
-                raise ValueError
+                raise ValueError("Input harus > 0")
 
             lamda = 1 / interarrival
             mu = 1 / service_time
@@ -32,7 +35,6 @@ def index():
                 'Wq': round(Wq, 4)
             }
 
-            # Grafik
             labels = ['Waktu Antrian (Wq)', 'Waktu Sistem (W)']
             values = [Wq, W]
 
@@ -49,7 +51,3 @@ def index():
             hasil = "error"
 
     return render_template('index.html', hasil=hasil)
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
