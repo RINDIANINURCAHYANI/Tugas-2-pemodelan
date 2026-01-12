@@ -4,22 +4,22 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static", template_folder="templates")
 
-# PASTIKAN FOLDER STATIC ADA
+# pastikan folder static ada
 os.makedirs("static", exist_ok=True)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route("/", methods=["GET", "POST"])
 def index():
     hasil = None
 
-    if request.method == 'POST':
+    if request.method == "POST":
         try:
-            interarrival = float(request.form['interarrival'])
-            service_time = float(request.form['service'])
+            interarrival = float(request.form["interarrival"])
+            service_time = float(request.form["service"])
 
             if interarrival <= 0 or service_time <= 0:
-                raise ValueError("Input harus > 0")
+                raise ValueError
 
             lamda = 1 / interarrival
             mu = 1 / service_time
@@ -28,20 +28,16 @@ def index():
             Wq = (lamda ** 2) / (2 * mu * (mu - lamda / 2))
 
             hasil = {
-                'lambda': round(lamda, 4),
-                'mu': round(mu, 4),
-                'rho': round(rho, 4),
-                'W': round(W, 4),
-                'Wq': round(Wq, 4)
+                "lambda": round(lamda, 4),
+                "mu": round(mu, 4),
+                "rho": round(rho, 4),
+                "W": round(W, 4),
+                "Wq": round(Wq, 4),
             }
 
-            labels = ['Waktu Antrian (Wq)', 'Waktu Sistem (W)']
-            values = [Wq, W]
-
             plt.figure()
-            plt.bar(labels, values)
-            plt.title("Perbandingan Waktu Antrian dan Waktu Sistem")
-            plt.ylabel("Waktu (menit)")
+            plt.bar(["Wq", "W"], [Wq, W])
+            plt.title("Perbandingan Wq dan W")
             plt.tight_layout()
             plt.savefig("static/grafik.png")
             plt.close()
@@ -50,4 +46,4 @@ def index():
             print("ERROR:", e)
             hasil = "error"
 
-    return render_template('index.html', hasil=hasil)
+    return render_template("index.html", hasil=hasil)
