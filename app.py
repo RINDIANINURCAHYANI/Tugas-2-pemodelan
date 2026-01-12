@@ -1,13 +1,9 @@
-import os
 from flask import Flask, render_template, request
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
-
-# Pastikan folder static ada
-os.makedirs("static", exist_ok=True)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -23,6 +19,7 @@ def index():
 
             lamda = 1 / interarrival
             mu = 1 / service_time
+
             rho = lamda / (2 * mu)
             W = 1 / (mu - lamda / 2)
             Wq = (lamda ** 2) / (2 * mu * (mu - lamda / 2))
@@ -38,17 +35,11 @@ def index():
             plt.figure()
             plt.bar(["Wq", "W"], [Wq, W])
             plt.title("Perbandingan Wq dan W")
-            plt.tight_layout()
             plt.savefig("static/grafik.png")
             plt.close()
 
         except Exception as e:
-            print("ERROR:", e)
+            print(e)
             hasil = "error"
 
     return render_template("index.html", hasil=hasil)
-
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))
-    app.run(host="0.0.0.0", port=port)
