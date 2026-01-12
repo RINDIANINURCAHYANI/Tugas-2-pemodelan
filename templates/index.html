@@ -8,8 +8,8 @@
 <body>
 
 <div class="container">
-    <h1>Queuing Theory Calculator (M/M/2)</h1>
-    <p>Sistem Antrian Pelayan Ganda – Kantor Pos</p>
+    <h1>Sistem Antrian M/M/2</h1>
+    <p>Perhitungan Teori Antrian Pelayan Ganda</p>
 
     <form method="POST">
         <label>Waktu Antar Kedatangan (menit)</label>
@@ -23,18 +23,17 @@
 
     {% if hasil %}
         {% if hasil == "error" %}
-            <p class="error">Input tidak valid!</p>
+            <p class="error">Input tidak valid atau sistem tidak stabil!</p>
         {% else %}
-            <div class="result">
-                <h2>Hasil Perhitungan</h2>
-                <p>Laju Kedatangan (λ): {{ hasil.lambda }}</p>
-                <p>Laju Pelayanan (μ): {{ hasil.mu }}</p>
-                <p>Pemanfaatan Pelayan (ρ): {{ hasil.rho }}</p>
-                <p>Waktu Rata-rata dalam Sistem (W): {{ hasil.W }} menit</p>
-                <p>Waktu Rata-rata dalam Antrian (Wq): {{ hasil.Wq }} menit</p>
+        <div class="result">
+            <p>Laju Kedatangan (λ): {{ hasil.lambda }}</p>
+            <p>Laju Pelayanan (μ): {{ hasil.mu }}</p>
+            <p>Pemanfaatan (ρ): {{ hasil.rho }}</p>
+            <p>Waktu Sistem (W): {{ hasil.W }} menit</p>
+            <p>Waktu Antrian (Wq): {{ hasil.Wq }} menit</p>
 
-                <img src="{{ url_for('static', filename='grafik.png') }}" alt="Grafik Antrian">
-            </div>
+            <img src="{{ url_for('static', filename='grafik.png') }}">
+        </div>
         {% endif %}
     {% endif %}
 </div>
