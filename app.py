@@ -4,9 +4,9 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-app = Flask(__name__, static_folder="static", template_folder="templates")
+app = Flask(__name__)
 
-# pastikan folder static ada
+# Pastikan folder static ada
 os.makedirs("static", exist_ok=True)
 
 @app.route("/", methods=["GET", "POST"])
@@ -47,3 +47,8 @@ def index():
             hasil = "error"
 
     return render_template("index.html", hasil=hasil)
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
