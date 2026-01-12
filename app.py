@@ -1,4 +1,7 @@
 from flask import Flask, render_template, request
+import os
+
+# === Matplotlib SAFE MODE ===
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -11,14 +14,18 @@ def index():
 
     if request.method == "POST":
         try:
-            interarrival = float(request.form["interarrival"])
-            service_time = float(request.form["service"])
+            interarrival = float(request.form.get("interarrival"))
+            service_time = float(request.form.get("service"))
 
             if interarrival <= 0 or service_time <= 0:
-                raise ValueError
+                raise ValueError("Nilai harus positif")
 
+            # Parameter M/M/2
             lamda = 1 / interarrival
             mu = 1 / service_time
+
+            if mu <= lamda / 2:
+                raise ValueError("Sistem tidak stabil")
 
             rho = lamda / (2 * mu)
             W = 1 / (mu - lamda / 2)
@@ -32,14 +39,27 @@ def index():
                 "Wq": round(Wq, 4),
             }
 
-            plt.figure()
-            plt.bar(["Wq", "W"], [Wq, W])
-            plt.title("Perbandingan Wq dan W")
-            plt.savefig("static/grafik.png")
+            # ===== GRAFIK (SAFE) =====
+            grafik_path = os.path.join("static", "grafik.png")
+            os.makedirs("static", exist_ok=True)
+
+            plt.figure(figsize=(5, 4))
+            plt.bar(
+                ["Waktu Antrian (Wq)", "Waktu Sistem (W)"],
+                [Wq, W]
+            )
+            plt.ylabel("Waktu (menit)")
+            plt.title("Grafik Antrian M/M/2")
+            plt.tight_layout()
+            plt.savefig(grafik_path)
             plt.close()
 
         except Exception as e:
-            print(e)
             hasil = "error"
 
     return render_template("index.html", hasil=hasil)
+
+# === WAJIB UNTUK RAILWAY ===
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
