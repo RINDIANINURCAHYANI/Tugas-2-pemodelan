@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistem Antrian M/M/2</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>Queuing Theory Calculator (M/M/2)</h1>
+    <p>Sistem Antrian Pelayan Ganda – Kantor Pos</p>
+
+    <form method="POST">
+        <label>Waktu Antar Kedatangan (menit)</label>
+        <input type="number" step="any" name="interarrival" required>
+
+        <label>Waktu Pelayanan per Pelayan (menit)</label>
+        <input type="number" step="any" name="service" required>
+
+        <button type="submit">Hitung</button>
+    </form>
+
+    {% if hasil %}
+        {% if hasil == "error" %}
+            <p class="error">Input tidak valid!</p>
+        {% else %}
+            <div class="result">
+                <h2>Hasil Perhitungan</h2>
+                <p>Laju Kedatangan (λ): {{ hasil.lambda }}</p>
+                <p>Laju Pelayanan (μ): {{ hasil.mu }}</p>
+                <p>Pemanfaatan Pelayan (ρ): {{ hasil.rho }}</p>
+                <p>Waktu Rata-rata dalam Sistem (W): {{ hasil.W }} menit</p>
+                <p>Waktu Rata-rata dalam Antrian (Wq): {{ hasil.Wq }} menit</p>
+
+                <img src="{{ url_for('static', filename='grafik.png') }}" alt="Grafik Antrian">
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+
+</body>
+</html>
